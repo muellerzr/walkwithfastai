@@ -10,8 +10,8 @@ The goal is to have something much more than a "fastai recipe book," where inste
 
 There is a central framework and theme for each super chapter, as you can see in the Table of Contents menu at the top of this screen. Topics are broken down by their super topic, such as:
 * Vision
-  * Classification
-    * Single Label
+    * Classification
+      * Single Label
 
 These collection of articles can be as simple as showing a few lines of code for a use-case, to as advanced as introducing and explaining a topic.
 

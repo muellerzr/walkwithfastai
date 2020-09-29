@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  },
+  "devDependencies": {
+    "@vuepress-reco/theme-cli": "^1.0.6",
+    "@vuepress/theme-blog": "^2.3.2",
+    "vuepress": "^1.6.0"
+  }
+}

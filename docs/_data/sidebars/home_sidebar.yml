@@ -7,44 +7,30 @@ entries:
 - folders:
   - folderitems:
     - output: web,pdf
-      title: How to Contribute a Chapter
-      url: /intro.contribute
-    output: web
-    title: Introduction
-  - folderitems:
+      title: Overview
+      url: /
     - output: web,pdf
-      title: Introduction
-      url: /vision.intro
-      subfolders:
-      - output: web
-        subfolderitems:
-        - output: web,pdf
-          title: Single Label (Beginner)
-          url: /vision.clas.single_label
-        title: Classification
-      - output: web
-        subfolderitems:
-        - output: web,pdf
-          title: timm
-          url: /vision.external.timm
-        title: External Model Integrations
-    output: web
-    title: Vision
-  - folderitems:
+      title: utils
+      url: utils.html
     - output: web,pdf
-      title: Introduction
-      url: /tab.clas.binary
-      subfolders:
-      - output: web
-        subfolderitems:
-        - output: web,pdf
-          title: Binary (Beginner)
-          url: /tab.clas.binary
-        title: Classification
+      title: intro.contribute
+      url: intro.contribute.html
     - output: web,pdf
-      title: Cross Validation (Intermediate)
-      url: /tab.cv
+      title: vision.clas.single_label
+      url: vision.clas.single_label.html
+    - output: web,pdf
+      title: vision.external.timm
+      url: vision.external.timm.html
+    - output: web,pdf
+      title: vision.intro
+      url: vision.intro.html
+    - output: web,pdf
+      title: tab.clas.binary
+      url: tab.clas.binary.html
+    - output: web,pdf
+      title: tab.cv
+      url: tab.cv.html
     output: web
-    title: Tabular
+    title: wwf
   output: web
   title: Sidebar

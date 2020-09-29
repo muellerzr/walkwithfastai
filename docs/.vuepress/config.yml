@@ -1,0 +1,44 @@
+title: ''
+description: 'Welcome to fastai'
+base: '/walkwithfastai.github.io/'
+markdown: 
+  extractHeaders: ['h2', 'h3', 'h4']
+themeConfig:
+  logo: 'https://www.jovian.ml/fastai_logo.png'
+  repo: 'walkwithfastai/walkwithfastai.github.io'
+  repoLabel: 'GitHub'
+  # algolia:
+  #  apiKey: '50038e91df1b8fc12eec16b113b48613'
+  #  indexName: 'fast_ai'
+  sidebar: 'auto'
+  sidebarDepth: 4
+  displayAllHeaders: true
+  nav:
+    - text: 'Overview'
+      link: '/'
+    - text: 'Introduction'
+      items: 
+        - text: 'How to Contribute a Chapter'
+          link: '/intro.contribute'
+    - text: 'Vision'
+      items:
+        - text: 'Introduction'
+          link: '/vision.intro'
+        - text: 'Classification'
+          items:
+            - text: 'Single Label (Beginner)'
+              link: '/vision.clas.single_label'
+        - text: 'External Model Integrations'
+          items:
+            - text: 'timm'
+              link: '/vision.external.timm'
+    - text: 'Tabular'
+      items:
+        - text: 'Introduction'
+          link: '/tab.clas.binary'
+        - text: 'Classification'
+          items:
+            - text: 'Binary (Beginner)'
+              link: '/tab.clas.binary'
+        - text: 'Cross Validation (Intermediate)'
+          link: '/tab.cv'

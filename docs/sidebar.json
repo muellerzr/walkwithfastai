@@ -1,27 +1,12 @@
 {
-	"Introduction": {
-		"How to Contribute a Chapter": "/intro.contribute"
-	},
-    "Vision": {
-        "Introduction": "/vision.intro",
-        "": {
-            "Classification": {
-                "Single Label (Beginner)": "/vision.clas.single_label"
-            }
-        },
-        "empty1": {
-            "External Model Integrations": {
-                "timm": "/vision.external.timm"
-            }
-        }
-    },
-    "Tabular": {
-        "Introduction": "/tab.clas.binary",
-        "": {
-            "Classification": {
-                "Binary (Beginner)": "/tab.clas.binary"
-            }
-        },
-        "Cross Validation (Intermediate)": "/tab.cv"
-    }
+  "wwf": {
+    "Overview": "/",
+    "utils": "utils.html",
+    "intro.contribute": "intro.contribute.html",
+    "vision.clas.single_label": "vision.clas.single_label.html",
+    "vision.external.timm": "vision.external.timm.html",
+    "vision.intro": "vision.intro.html",
+    "tab.clas.binary": "tab.clas.binary.html",
+    "tab.cv": "tab.cv.html"
+  }
 }
