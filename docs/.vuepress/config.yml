@@ -1,6 +1,6 @@
 title: ''
 description: 'Welcome to fastai'
-base: '<repo>'
+base: '<REPO>'
 markdown: 
   extractHeaders: ['h2', 'h3', 'h4']
 themeConfig:
