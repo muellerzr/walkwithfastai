@@ -7,7 +7,7 @@
 Simple methods to grab and state libraries you are using for a tutorial
 
 
-<h4 id="get_version" class="doc_header"><code>get_version</code><a href="__main__.py#L3" class="source_link" style="float:right">[source]</a></h4>
+<h4 id="get_version" class="doc_header"><code>get_version</code><a href="wwf/utils.py#L7" class="source_link" style="float:right">[source]</a></h4>
 
 > <code>get_version</code>(**`lib`**:`str`)
 
@@ -15,7 +15,7 @@ Returns version of `lib`
 
 
 
-<h4 id="state_versions" class="doc_header"><code>state_versions</code><a href="__main__.py#L3" class="source_link" style="float:right">[source]</a></h4>
+<h4 id="state_versions" class="doc_header"><code>state_versions</code><a href="wwf/utils.py#L13" class="source_link" style="float:right">[source]</a></h4>
 
 > <code>state_versions</code>(**`libs`**:`list`=*`[]`*)
 
