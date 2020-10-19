@@ -1,11 +1,11 @@
 title: ''
 description: 'Welcome to fastai'
-base: '<REPO>'
+base: '/muellerzr.github.io/walkwithfastai/'
 markdown: 
   extractHeaders: ['h2', 'h3', 'h4']
 themeConfig:
   logo: 'https://www.jovian.ml/fastai_logo.png'
-  repo: 'walkwithfastai'
+  repo: 'muellerzr/walkwithfastai'
   repoLabel: 'GitHub'
   # algolia:
   #  apiKey: '50038e91df1b8fc12eec16b113b48613'
