@@ -4,7 +4,7 @@
 
 Notebooks should be named by their sections as well as a topic. Such as how this one is `01_intro` (for introduction section) `.contribute` (as it's the contribution guide). Another example would be `02_vision.classification.single_label`
 
-In the very first part of your notebook you should denote the `fastai` and `fastcore` versions, as well as any other library used. I have a cookie-cutter cell below. Simply call [`state_versions`](/utils.html#state_versions) with a list of your libraries being used and it will display them in `Markdown`. 
+In the very first part of your notebook you should denote the `fastai` and `fastcore` versions, as well as any other library used. I have a cookie-cutter cell below. Simply call `state_versions` with a list of your libraries being used and it will display them in `Markdown`. 
 
 Ensure you have a `#hide_input` comment above the function call so the documentation looks clean.
 

@@ -21,19 +21,19 @@ This notebook can run along side the first tabular lesson from Walk with fastai2
 
 First we need to call the tabular module:
 
-```python
+```
 from fastai.tabular.all import *
 ```
 
 And grab our dataset:
 
-```python
+```
 path = untar_data(URLs.ADULT_SAMPLE)
 ```
 
 If we look at the contents of our folder, we will find our data lives in `adult.csv`:
 
-```python
+```
 path.ls()
 ```
 
@@ -46,7 +46,7 @@ path.ls()
 
 We'll go ahead and open it in `Pandas` and take a look:
 
-```python
+```
 df = pd.read_csv(path/'adult.csv')
 df.head()
 ```
@@ -188,47 +188,47 @@ df.head()
 
 ## TabularPandas
 
-`fastai` has a new way of dealing with tabular data by utilizing a [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas) object. It expects some dataframe, some `procs`, `cat_names`, `cont_names`, `y_names`, `y_block`, and some `splits`. We'll walk through all of them
+`fastai` has a new way of dealing with tabular data by utilizing a `TabularPandas` object. It expects some dataframe, some `procs`, `cat_names`, `cont_names`, `y_names`, `y_block`, and some `splits`. We'll walk through all of them
 
 First we need to grab our categorical and continuous variables, along with how we want to process our data.
 
-```python
+```
 cat_names = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race']
 cont_names = ['age', 'fnlwgt', 'education-num']
 ```
 
 When we pre-process tabular data with `fastai`, we do one or more of three transforms:
 
-* [`Categorify`](https://docs.fast.ai/tabular.core#Categorify)
-* [`FillMissing`](https://docs.fast.ai/tabular.core#FillMissing)
-* [`Normalize`](https://docs.fast.ai/data.transforms#Normalize)
+* `Categorify`
+* `FillMissing`
+* `Normalize`
 
 ### Categorify
 
-[`Categorify`](https://docs.fast.ai/tabular.core#Categorify) will transform columns that are in your `cat_names` into that type, along with label encoding our categorical data. 
+`Categorify` will transform columns that are in your `cat_names` into that type, along with label encoding our categorical data. 
 
 
 First we'll make an instance of it:
 
-```python
+```
 cat = Categorify()
 ```
 
 And now let's try transforming a dataframe
 
-```python
+```
 to = TabularPandas(df, cat, cat_names)
 ```
 
 We can then extract that transform from `to.procs.categorify`:
 
-```python
+```
 cats = to.procs.categorify
 ```
 
 Let's take a look at the categories:
 
-```python
+```
 cats['relationship']
 ```
 
@@ -241,7 +241,7 @@ cats['relationship']
 
 We can see that it added a `#na# `category. Let's look at the actual column:
 
-```python
+```
 to.show(max_n=3)
 ```
 
@@ -294,7 +294,7 @@ We can see now, for example, that `occupation` got returned a `#na# `value (as i
 
 If we call `to.cats` we can see our one-hot encoded variables:
 
-```python
+```
 to.cats.head()
 ```
 
@@ -383,17 +383,17 @@ to.cats.head()
 
 To properly work with our numerical columns, we need to show a relationship between them all that our model can understand. This is commonly done through Normalization, where we scale the data between -1 and 1, and compute a `z-score`
 
-```python
+```
 norm = Normalize()
 ```
 
 Let's make another `to`
 
-```python
+```
 to = TabularPandas(df, norm, cont_names=cont_names)
 ```
 
-```python
+```
 norms = to.procs.normalize
 ```
 
@@ -401,7 +401,7 @@ And take a closer look.
 
 We can grab the means and standard deviations like so:
 
-```python
+```
 norms.means
 ```
 
@@ -414,7 +414,7 @@ norms.means
 
 
 
-```python
+```
 norms.stds
 ```
 
@@ -429,7 +429,7 @@ norms.stds
 
 And we can also call `to.conts` to take a look at our transformed data:
 
-```python
+```
 to.conts.head()
 ```
 
@@ -505,19 +505,19 @@ Now the last thing we need to do is take care of any missing values in our **con
 
 By default it uses `median`:
 
-```python
+```
 fm = FillMissing(fill_strategy=FillStrategy.median)
 ```
 
-We'll recreate another [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas):
+We'll recreate another `TabularPandas`:
 
-```python
+```
 to = TabularPandas(df, fm, cont_names=cont_names)
 ```
 
 Let's look at those missing values in the first few rows:
 
-```python
+```
 to.conts.head()
 ```
 
@@ -586,7 +586,7 @@ to.conts.head()
 
 **But wait!** There's more!
 
-```python
+```
 to.cat_names
 ```
 
@@ -599,7 +599,7 @@ to.cat_names
 
 We have categorical values?! Yes!
 
-```python
+```
 to.cats.head()
 ```
 
@@ -659,9 +659,9 @@ We now have an additional boolean value based on if the value was missing or not
 
 ## The DataLoaders
 
-Now let's build our [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas) for classifying. We're also going to want to split our data and declare our `y_names` too:
+Now let's build our `TabularPandas` for classifying. We're also going to want to split our data and declare our `y_names` too:
 
-```python
+```
 splits = RandomSplitter()(range_of(df))
 splits
 ```
@@ -674,9 +674,9 @@ splits
 
 
 
-What is [`range_of`](https://fastcore.fast.ai/utils#range_of)?
+What is `range_of`?
 
-```python
+```
 range_of(df)[:5], len(df)
 ```
 
@@ -689,9 +689,9 @@ range_of(df)[:5], len(df)
 
 It's a list of total index's in our `DataFrame`
 
-We'll use all our `cat` and `cont` names, the `procs`, declare a `y_name`, and finally specify a single-label classification problem with [`CategoryBlock`](https://docs.fast.ai/data.block#CategoryBlock)
+We'll use all our `cat` and `cont` names, the `procs`, declare a `y_name`, and finally specify a single-label classification problem with `CategoryBlock`
 
-```python
+```
 cat_names = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race']
 cont_names = ['age', 'fnlwgt', 'education-num']
 procs = [Categorify, FillMissing, Normalize]
@@ -699,38 +699,38 @@ y_names = 'salary'
 y_block = CategoryBlock()
 ```
 
-Now that we have everything declared, let's build our [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas):
+Now that we have everything declared, let's build our `TabularPandas`:
 
-```python
+```
 to = TabularPandas(df, procs=procs, cat_names=cat_names, cont_names=cont_names,
                    y_names=y_names, y_block=y_block, splits=splits)
 ```
 
-And now we can build the [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders). We can do this one of two ways, first just calling `to.dataloaders()` on our data:
+And now we can build the `DataLoaders`. We can do this one of two ways, first just calling `to.dataloaders()` on our data:
 
-```python
+```
 dls = to.dataloaders()
 ```
 
-Or we can create the [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders) ourselves (a train and valid). One great reason to do this this way is we can pass in different batch sizes into each [`TabDataLoader`](https://docs.fast.ai/tabular.core#TabDataLoader), along with changing options like `shuffle` and `drop_last`
+Or we can create the `DataLoaders` ourselves (a train and valid). One great reason to do this this way is we can pass in different batch sizes into each `TabDataLoader`, along with changing options like `shuffle` and `drop_last`
 
 So how do we use it? Our train and validation data live in to.train and to.valid right now, so we specify that along with our options. When you make a training DataLoader, you want `shuffle` to be `True` and `drop_last` to be `True` (so we drop the last incomplete batch)
 
 
-```python
+```
 trn_dl = TabDataLoader(to.train, bs=64, shuffle=True, drop_last=True)
 val_dl = TabDataLoader(to.valid, bs=128)
 ```
 
-Now we can make some [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders):
+Now we can make some `DataLoaders`:
 
-```python
+```
 dls = DataLoaders(trn_dl, val_dl)
 ```
 
 And show a batch of data:
 
-```python
+```
 dls.show_batch()
 ```
 
@@ -897,9 +897,9 @@ dls.show_batch()
 </table>
 
 
-> Why can we do the `.dataloaders()`? Because [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas) itself is actually a set of `TabDataLoaders`! See below for a comparison test:
+> Why can we do the `.dataloaders()`? Because `TabularPandas` itself is actually a set of `TabDataLoaders`! See below for a comparison test:
 
-```python
+```
 to._dbunch_type == dls._dbunch_type
 ```
 
@@ -912,7 +912,7 @@ to._dbunch_type == dls._dbunch_type
 
 ## Tabular Learner and Training a Model
 
-Now we can build our [`Learner`](https://docs.fast.ai/learner#Learner)! But what's special about a tabular neural network?
+Now we can build our `Learner`! But what's special about a tabular neural network?
 
 ### Categorical Variables
 
@@ -926,7 +926,7 @@ $$min(600, (1.6 * {var.nunique)}^{0.56})$$
 
 Let's calculate these embedding sizes for our model to take a look-see:
 
-```python
+```
 emb_szs = get_emb_sz(to); emb_szs
 ```
 
@@ -940,7 +940,7 @@ emb_szs = get_emb_sz(to); emb_szs
 
 If we want to see what each one aligns to, let's look at the order of `cat_names`
 
-```python
+```
 to.cat_names
 ```
 
@@ -953,7 +953,7 @@ to.cat_names
 
 Let's specifically look at `workclass`:
 
-```python
+```
 to['workclass'].nunique()
 ```
 
@@ -970,7 +970,7 @@ If you notice, we had `10` there, this is to take one more column for any missin
 
 Numericals we can simply pass in how many there are to the model:
 
-```python
+```
 cont_len = len(to.cont_names); cont_len
 ```
 
@@ -981,13 +981,13 @@ cont_len = len(to.cont_names); cont_len
 
 
 
-And now we have all the pieces we need to build a [`TabularModel`](https://docs.fast.ai/tabular.model#TabularModel)!
+And now we have all the pieces we need to build a `TabularModel`!
 
 ### TabularModel
 
 What makes this model a little different is our batches is actually two inputs:
 
-```python
+```
 batch = dls.one_batch(); len(batch)
 ```
 
@@ -998,7 +998,7 @@ batch = dls.one_batch(); len(batch)
 
 
 
-```python
+```
 
 batch[0][0], batch[1][0]
 ```
@@ -1015,13 +1015,13 @@ With the first being our categorical variables and the second being our numerica
 
 Now let's make our model. We'll want our size of our embeddings, the number of continuous variables, the number of outputs, and how large and how many fully connected layers we want to use:
 
-```python
+```
 net = TabularModel(emb_szs, cont_len, 2, [200,100])
 ```
 
 Let's see it's architecture:
 
-```python
+```
 net
 ```
 
@@ -1062,15 +1062,15 @@ net
 ### tabular_learner
 
 
-Now that we know the background, let's build our model a little bit faster and generate a [`Learner`](https://docs.fast.ai/learner#Learner) too:
+Now that we know the background, let's build our model a little bit faster and generate a `Learner` too:
 
-```python
+```
 learn = tabular_learner(dls, [200,100], metrics=accuracy)
 ```
 
 And now we can fit!
 
-```python
+```
 learn.lr_find()
 ```
 
@@ -1086,10 +1086,10 @@ learn.lr_find()
 
 
 
-![png](output_89_2.png)
+![png](03_tab.clas.binary_files/output_88_2.png)
 
 
-```python
+```
 learn.fit(3, 1e-2)
 ```
 
@@ -1133,7 +1133,7 @@ learn.fit(3, 1e-2)
 
 Can we speed this up a little? Yes we can! The more you can load into a batch, the faster you can process the data. This is a careful balance, for tabular data I go to a maximum of 4096 rows per batch if the dataset is large enough for a decent number of batches:
 
-```python
+```
 dls = to.dataloaders(bs=1024)
 learn = tabular_learner(dls, [200,100], metrics=accuracy)
 learn.fit(3, 1e-2)
@@ -1179,7 +1179,7 @@ learn.fit(3, 1e-2)
 
 We can see we fit very quickly, but it didn't fit quite as well (there is a trade-off):
 
-```python
+```
 dls = to.dataloaders(bs=4096)
 learn = tabular_learner(dls, [200,100], metrics=accuracy)
 learn.fit(3, 1e-2)
@@ -1226,7 +1226,7 @@ learn.fit(3, 1e-2)
 
 Now let's look at how we can perform inference. To do predictions we can use `fastai`'s in-house `learn.predict` for individual rows, and `get_preds` + `test_dl` for batches of predictions:
 
-```python
+```
 row, cls, probs = learn.predict(df.iloc[0])
 ```
 
@@ -1234,7 +1234,7 @@ row, cls, probs = learn.predict(df.iloc[0])
 
 
 
-```python
+```
 row.show()
 ```
 
@@ -1278,13 +1278,13 @@ row.show()
 Now let's try `test_dl`. There's something special we can do here too:
 
 
-```python
+```
 dl = learn.dls.test_dl(df.iloc[:100])
 ```
 
 Let's look at a batch:
 
-```python
+```
 dl.show_batch()
 ```
 
@@ -1455,7 +1455,7 @@ We have our labels! It'll grab them if possible by default!
 
 What does that mean? Well, besides simply calling `get_preds`, we can also run `validate` to see how a model performs. This is nice as it can allow for efficient methods when calculating something like permutation importance:
 
-```python
+```
 learn.validate(dl=dl)
 ```
 
@@ -1472,7 +1472,7 @@ learn.validate(dl=dl)
 
 We'll also show an example of `get_preds`:
 
-```python
+```
 preds = learn.get_preds(dl=dl)
 ```
 
@@ -1480,7 +1480,7 @@ preds = learn.get_preds(dl=dl)
 
 
 
-```python
+```
 preds[0][0]
 ```
 
@@ -1493,7 +1493,7 @@ preds[0][0]
 
 What would happen if I accidently passed in an unlablled dataset to `learn.validate` though? Let's find out:
 
-```python
+```
 df2 = df.iloc[:100].drop('salary', axis=1)
 df2.head()
 ```
@@ -1627,7 +1627,7 @@ df2.head()
 
 
 
-```python
+```
 dl = learn.dls.test_dl(df2)
 learn.validate(dl=dl)
 ```

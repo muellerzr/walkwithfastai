@@ -29,9 +29,9 @@ The `PETs` dataset is designed to try and distinguish between 12 species of cats
 
 But before anything, we need data!
 
-To do so we will use the [`untar_data`](https://docs.fast.ai/data.external#untar_data) function paired with [`URLs.PETS`](https://docs.fast.ai/data.external#URLs.PETS). This will go ahead and download and extract a `.gz` dataset for us. The [`URLs.PETS`](https://docs.fast.ai/data.external#URLs.PETS) denotes the URL where our dataset lives.
+To do so we will use the `untar_data` function paired with `URLs.PETS`. This will go ahead and download and extract a `.gz` dataset for us. The `URLs.PETS` denotes the URL where our dataset lives.
 
-We can view the documentation for [`untar_data`](https://docs.fast.ai/data.external#untar_data) by using the `help` or [`doc`](https://nbdev.fast.ai/showdoc#doc) functions:
+We can view the documentation for `untar_data` by using the `help` or `doc` functions:
 
 ```python
 help(untar_data)
@@ -44,7 +44,7 @@ help(untar_data)
     
 
 
-[`doc`](https://nbdev.fast.ai/showdoc#doc) will pull it up in a pop-up window (run this notebook to see):
+`doc` will pull it up in a pop-up window (run this notebook to see):
 
 ```python
 doc(untar_data)
@@ -79,7 +79,7 @@ path
 
 
 
-To make this notebook reproduceable, we can use `fastai`'s [`set_seed`](https://docs.fast.ai/torch_core#set_seed) function to ensure every possible source of randomness has the same seed:
+To make this notebook reproduceable, we can use `fastai`'s `set_seed` function to ensure every possible source of randomness has the same seed:
 
 ```python
 set_seed(2)
@@ -100,13 +100,13 @@ path.ls()[:3]
 
 We can see a `images` and `annotations` folder. We'll focus on the `images` folder.
 
-## Building the [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders)
+## Building the `DataLoaders`
 
-To actually train our neural network model we need to first prepare our dataset for `fastai` to expect it. This comes in the form of [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders). We'll show a high-level one-liner usage followed by a [`DataBlock`](https://docs.fast.ai/data.block#DataBlock) example
+To actually train our neural network model we need to first prepare our dataset for `fastai` to expect it. This comes in the form of `DataLoaders`. We'll show a high-level one-liner usage followed by a `DataBlock` example
 
 Since we have the `path` to our data, we'll need to extract the filenames of all the images. 
 
-[`get_image_files`](https://docs.fast.ai/data.transforms#get_image_files) can do this for us, we simply pass in our `path` to where the images are stored: 
+`get_image_files` can do this for us, we simply pass in our `path` to where the images are stored: 
 
 ```python
 fnames = get_image_files(path/'images')
@@ -134,7 +134,7 @@ Along with how many images we want our model to process at one time (a batch siz
 bs=64
 ```
 
-Lastly we can build our [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders)! Let's see a one-liner where we pass it all in
+Lastly we can build our `DataLoaders`! Let's see a one-liner where we pass it all in
 > For those familiar with `fastai` v1, this is akin to `ImageDataBunch`
 
 ```python
@@ -143,7 +143,7 @@ dls = ImageDataLoaders.from_name_re(path, fnames, pat,
                                    item_tfms=item_tfms, bs=bs)
 ```
 
-What about using the [`DataBlock`](https://docs.fast.ai/data.block#DataBlock) API I keep hearing about? 
+What about using the `DataBlock` API I keep hearing about? 
 
 It's a way to formulate a *blueprint* of a data pipeline that can be tweaked more than the factory `xDataLoaders` methods. The version for our problem looks like:
 
@@ -158,16 +158,16 @@ pets = DataBlock(blocks=(ImageBlock, CategoryBlock),
 
 Let's break it all down:
   * `blocks`: 
-    * [`ImageBlock`](https://docs.fast.ai/vision.data#ImageBlock): Our `x`'s will be images
-    * [`CategoryBlock`](https://docs.fast.ai/data.block#CategoryBlock): Our `y`s will be a single category label
-  * `get_items`: How we are getting our data. (when doing image problems you will mostly just use [`get_image_files`](https://docs.fast.ai/data.transforms#get_image_files) by default)
+    * `ImageBlock`: Our `x`'s will be images
+    * `CategoryBlock`: Our `y`s will be a single category label
+  * `get_items`: How we are getting our data. (when doing image problems you will mostly just use `get_image_files` by default)
   * `splitter`: How we want to split our data. 
-    * [`RandomSplitter`](https://docs.fast.ai/data.transforms#RandomSplitter): Will randomly split the data with 20% in our validation set (by default), with the other 80% in our training data. We can pass in a percentage and a seed. (we won't be doing the latter as we already set a global seed)
+    * `RandomSplitter`: Will randomly split the data with 20% in our validation set (by default), with the other 80% in our training data. We can pass in a percentage and a seed. (we won't be doing the latter as we already set a global seed)
   * `get_y`: How to extract the labels for our data
-    * [`RegexLabeller`](https://docs.fast.ai/data.transforms#RegexLabeller): Uses a Regex `pat` to extract them
+    * `RegexLabeller`: Uses a Regex `pat` to extract them
   * `item` and `batch` tfms are our data augmentation
 
-So now that we have the blueprint we can build our [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders) by calling the `.dataloaders` method. We'll need to pass it a location to find our source images as well as that batch size we defined earlier:
+So now that we have the blueprint we can build our `DataLoaders` by calling the `.dataloaders` method. We'll need to pass it a location to find our source images as well as that batch size we defined earlier:
 
 ```python
 path_im = path/'images'
@@ -176,20 +176,20 @@ dls = pets.dataloaders(path_im, bs=bs)
 
 ## Looking at the Data
 
-Now that the [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders) have been built we can take a peek at the data and a few special bits and pieces about them. 
+Now that the `DataLoaders` have been built we can take a peek at the data and a few special bits and pieces about them. 
 
 First let's take a look at a batch of data. We can use the `show_batch` function and pass in a maximum number of images to show, as well as how large we want them to appear as in our notebooks. 
-> By default it will show images from the validation [`DataLoader`](https://docs.fast.ai/data.load#DataLoader). To show data from the training set, use `dls[0]` rather than `dls`
+> By default it will show images from the validation `DataLoader`. To show data from the training set, use `dls[0]` rather than `dls`
 
 ```python
 dls.show_batch(max_n=9, figsize=(6,7))
 ```
 
 
-![png](output_38_0.png)
+![png](02_vision.clas.single_label_files/output_37_0.png)
 
 
-If we want to see how many classes we have, and the names of them we can simply call `dls.vocab`. The first is the number of classes, the second is the names of our classes. You may notice this looks a bit odd, that's because this [`L`](https://fastcore.fast.ai/foundation#L) is a new invention of Jeremy and Sylvian. Essentially it's a Python list taken to the extreme.
+If we want to see how many classes we have, and the names of them we can simply call `dls.vocab`. The first is the number of classes, the second is the names of our classes. You may notice this looks a bit odd, that's because this `L` is a new invention of Jeremy and Sylvian. Essentially it's a Python list taken to the extreme.
 
 Before if we wanted to grab the index for the name of a class (eg. our model output 0 as our class), we would need to use `data.c2i` to grab the Class2Index mapping. This is still here, it lives in `dls.vocab.o2i` (Object2ID).
 
@@ -214,8 +214,8 @@ It's a dictionary mapping of `name -> value`, so let's only look at the first fi
 
 We will be using a convolutional neural network backbone and a fully connected head with a single hidden layer as our classifier. Don't worry if thats a bunch of nonsense for now. Right now, just know this: we are piggybacking off of a model to help us classify images into 37 categories.
 
-First we need to make our neural network using a [`Learner`](https://docs.fast.ai/learner#Learner). A [`Learner`](https://docs.fast.ai/learner#Learner) needs (on a basic level):
-* [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders)
+First we need to make our neural network using a `Learner`. A `Learner` needs (on a basic level):
+* `DataLoaders`
 * An architecture
 * An evaluation metric (not actually required for training)
 * A loss function
@@ -223,14 +223,14 @@ First we need to make our neural network using a [`Learner`](https://docs.fast.a
 
 We'll also be using `mixed_precision` (fp16).
 
-There are many different [`Learner`](https://docs.fast.ai/learner#Learner) cookie-cutters to use based on what problem you are using it for. Since we're doing transfer learning with CNN's, we will use [`cnn_learner`](https://docs.fast.ai/vision.learner#cnn_learner) and a ResNet34:
+There are many different `Learner` cookie-cutters to use based on what problem you are using it for. Since we're doing transfer learning with CNN's, we will use `cnn_learner` and a ResNet34:
 
 ```python
 learn = cnn_learner(dls, resnet34, pretrained=True, metrics=error_rate).to_fp16()
 ```
 
 Some assumptions and magic is being done here:
-* Loss function is assumed as classification (from the [`DataLoaders`](https://docs.fast.ai/data.core#DataLoaders)), so [`CrossEntropyLossFlat`](https://docs.fast.ai/losses#CrossEntropyLossFlat) is being used
+* Loss function is assumed as classification (from the `DataLoaders`), so `CrossEntropyLossFlat` is being used
 * By default the optimizer is Adam
 * A custom head was added onto our ResNet body, with the body's weights being frozen
 
@@ -263,7 +263,7 @@ learn.fit_one_cycle(1)
 </table>
 
 
-Afterwards we can *unfreeze* those frozen weights and train a little more. We'll utilize the [`Learner.lr_find`](https://docs.fast.ai/callback.schedule#Learner.lr_find) function to help us decide a good learning rate: 
+Afterwards we can *unfreeze* those frozen weights and train a little more. We'll utilize the `Learner.lr_find` function to help us decide a good learning rate: 
 
 ```python
 learn.lr_find()
@@ -281,7 +281,7 @@ learn.lr_find()
 
 
 
-![png](output_49_2.png)
+![png](02_vision.clas.single_label_files/output_48_2.png)
 
 
 Alright so if we look here, we don't really start seeing a spike in our losses until we get close to 1e-2, so a good section to train on is between 1e-4 and 1e-3, so we'll do that!
@@ -391,3 +391,42 @@ res[:10]
      'Egyptian_Mau']
 
 
+
+```python
+from nbdev.export2html import *
+```
+
+```python
+from fastai.data.all import *
+```
+
+```python
+fnames = get_files('./', extensions='.ipynb')
+```
+
+```python
+for name in fnames:
+    nbdev_nb2md(name)
+```
+
+    usage: ipykernel_launcher.py [-h] [--dest DEST] [--use_img USE_IMG]
+                                 [--replace REPLACE] [--pdb] [--xtra XTRA]
+                                 path_nb
+    ipykernel_launcher.py: error: unrecognized arguments: -f
+
+
+
+    An exception has occurred, use %tb to see the full traceback.
+
+
+    SystemExit: 2
+
+
+
+    /home/ml1/anaconda3/envs/zach-fastai/lib/python3.7/site-packages/IPython/core/interactiveshell.py:3339: UserWarning: To exit: use 'exit', 'quit', or Ctrl-D.
+      warn("To exit: use 'exit', 'quit', or Ctrl-D.", stacklevel=1)
+
+
+```python
+doc(nbdev_nb2md)
+```

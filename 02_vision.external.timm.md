@@ -28,7 +28,7 @@ As we are well aware, `fastai` models deep down are just `PyTorch` models. Howev
 
 For users of the `fastai` library, it is a goldmine of models to play with! But how do we use it? Let's set up a basic `PETs` problem following the [tutorial](https://walkwithfastai.com/vision.clas.single_label):
 
-```python
+```
 path = untar_data(URLs.PETS)
 pat = r'/([^/]+)_\d+.*'
 item_tfms = RandomResizedCrop(460, min_scale=0.75, ratio=(1.,1.))
@@ -45,9 +45,9 @@ dls = pets.dataloaders(path/'images', bs=bs)
 
 From here we would normally do something like `cnn_learner(dls, arch, metrics)`, however we need to do a few things special to work with Ross' framework.
 
-`fastai` has a [`create_body`](https://docs.fast.ai/vision.learner#create_body) function, whcih is called during [`cnn_learner`](https://docs.fast.ai/vision.learner#cnn_learner), that will take a model architecuture and slice off the last Linear layer (resulting in a "body" that outputs unpooled features). This function looks like:
+`fastai` has a `create_body` function, whcih is called during `cnn_learner`, that will take a model architecuture and slice off the last Linear layer (resulting in a "body" that outputs unpooled features). This function looks like:
 
-```python
+```
 def create_body(arch, n_in=3, pretrained=True, cut=None):
     "Cut off the body of a typically pretrained `arch` as determined by `cut`"
     model = arch(pretrained=pretrained)
@@ -63,15 +63,8 @@ def create_body(arch, n_in=3, pretrained=True, cut=None):
 We're going to create our own that plays well
 > Also:notebooks like this are exported as external modules inside of the `wwf` library! This one can be found in `vision.timm` to be used with your projects!
 
-
-<h4 id="create_timm_body" class="doc_header"><code>create_timm_body</code><a href="wwf/vision/timm.py#L13" class="source_link" style="float:right">[source]</a></h4>
-
-> <code>create_timm_body</code>(**`arch`**:`str`, **`pretrained`**=*`True`*, **`cut`**=*`None`*, **`n_in`**=*`3`*)
-
-Creates a body from any model in the `timm` library.
-
-
-```python
+```
+#exports
 def create_timm_body(arch:str, pretrained=True, cut=None, n_in=3):
     "Creates a body from any model in the `timm` library."
     model = create_model(arch, pretrained=pretrained, num_classes=0, global_pool='')
@@ -86,13 +79,13 @@ def create_timm_body(arch:str, pretrained=True, cut=None, n_in=3):
 
 How do we use it? Let's try it out on an `efficientnet_b3` architecture (the entire list of supported architectures is found [here](https://github.com/rwightman/pytorch-image-models#models)
 
-```python
+```
 body = create_timm_body('efficientnet_b3a', pretrained=True)
 ```
 
-From here we can calculate the number input features our head needs to have with [`num_features_model`](https://docs.fast.ai/callback.hook#num_features_model).  We'll mutliply this by two since we have two pooling layers, [`AdaptiveConcatPool2d`](https://docs.fast.ai/layers#AdaptiveConcatPool2d) and `nn.AdaptiveAvgPool2d`
+From here we can calculate the number input features our head needs to have with `num_features_model`.  We'll mutliply this by two since we have two pooling layers, `AdaptiveConcatPool2d` and `nn.AdaptiveAvgPool2d`
 
-```python
+```
 nf = num_features_model(body)*2; nf
 ```
 
@@ -106,26 +99,26 @@ nf = num_features_model(body)*2; nf
 And now we can create a head!
 
 
-```python
+```
 head = create_head(nf, dls.c)
 ```
 
 To mix them together, we just wrap the two in a `nn.Sequential` and we now have a `PyTorch` model ready to be trained on:
 
-```python
+```
 net = nn.Sequential(body, head)
 ```
 
-From here we would pass it onto [`Learner`](https://docs.fast.ai/learner#Learner), specifying our `splitter` to be the [`default_split`](https://docs.fast.ai/vision.learner#default_split)
+From here we would pass it onto `Learner`, specifying our `splitter` to be the `default_split`
 > `default_splitter` expects the body in `model[0]` and the head in `model[1]` to split our layer groups
 
-```python
+```
 learn = Learner(dls, net, splitter=default_split)
 ```
 
 To know this all worked properly, we should be able to call `learn.freeze()` and check the number of frozen parameters. (You can also call `learn.summary` but we are not since it has a lengthy output):
 
-```python
+```
 learn.freeze()
 unfrozen_params = filter(lambda p: not p.requires_grad, learn.model.parameters())
 unfrozen_params = sum([np.prod(p.size()) for p in unfrozen_params])
@@ -133,7 +126,7 @@ model_parameters = filter(lambda p: p.requires_grad, learn.model.parameters())
 frozen_params = sum([np.prod(p.size()) for p in model_parameters])
 ```
 
-```python
+```
 unfrozen_params, frozen_params
 ```
 
@@ -148,9 +141,9 @@ Which we can see that only 1.6 million of the 10 million parameters are trainabl
 
 ## Turning it all into a function
 
-Let's make this a bit easier and create something like [`cnn_learner`](https://docs.fast.ai/vision.learner#cnn_learner), but for `timm`! We'll call it a [`timm_learner`](/vision.external.timm.html#timm_learner). First let's look at and compare what [`cnn_learner`](https://docs.fast.ai/vision.learner#cnn_learner) does internally:
+Let's make this a bit easier and create something like `cnn_learner`, but for `timm`! We'll call it a `timm_learner`. First let's look at and compare what `cnn_learner` does internally:
 
-```python
+```
 def cnn_learner(dls, arch, loss_func=None, pretrained=True, cut=None, splitter=None,
                 y_range=None, config=None, n_out=None, normalize=True, **kwargs):
     "Build a convnet style learner from `dls` and `arch`"
@@ -171,20 +164,13 @@ At first it looks scary, but let's try and read it as best we can:
 2. Grab the number of expected outputs
 3. Potentially normalize
 4. Add a `y_range`
-5. Create a `cnn_model` and [`Learner`](https://docs.fast.ai/learner#Learner)
+5. Create a `cnn_model` and `Learner`
 6. Freeze our model
 
-We're going to make a custom [`create_timm_model`](/vision.external.timm.html#create_timm_model) and [`timm_learner`](/vision.external.timm.html#timm_learner) function to do what we just did above. First, [`create_timm_model`](/vision.external.timm.html#create_timm_model) will model after [`create_cnn_model`](https://docs.fast.ai/vision.learner#create_cnn_model):
+We're going to make a custom `create_timm_model` and `timm_learner` function to do what we just did above. First, `create_timm_model` will model after `create_cnn_model`:
 
-
-<h4 id="create_timm_model" class="doc_header"><code>create_timm_model</code><a href="wwf/vision/timm.py#L25" class="source_link" style="float:right">[source]</a></h4>
-
-> <code>create_timm_model</code>(**`arch`**:`str`, **`n_out`**, **`cut`**=*`None`*, **`pretrained`**=*`True`*, **`n_in`**=*`3`*, **`init`**=*`kaiming_normal_`*, **`custom_head`**=*`None`*, **`concat_pool`**=*`True`*, **\*\*`kwargs`**)
-
-Create custom architecture using `arch`, `n_in` and `n_out` from the `timm` library
-
-
-```python
+```
+#exports
 def create_timm_model(arch:str, n_out, cut=None, pretrained=True, n_in=3, init=nn.init.kaiming_normal_, custom_head=None,
                      concat_pool=True, **kwargs):
     "Create custom architecture using `arch`, `n_in` and `n_out` from the `timm` library"
@@ -198,17 +184,10 @@ def create_timm_model(arch:str, n_out, cut=None, pretrained=True, n_in=3, init=n
     return model
 ```
 
-And now for our [`timm_learner`](/vision.external.timm.html#timm_learner):
+And now for our `timm_learner`:
 
-
-<h4 id="timm_learner" class="doc_header"><code>timm_learner</code><a href="wwf/vision/timm.py#L41" class="source_link" style="float:right">[source]</a></h4>
-
-> <code>timm_learner</code>(**`dls`**, **`arch`**:`str`, **`loss_func`**=*`None`*, **`pretrained`**=*`True`*, **`cut`**=*`None`*, **`splitter`**=*`None`*, **`y_range`**=*`None`*, **`config`**=*`None`*, **`n_out`**=*`None`*, **`normalize`**=*`True`*, **\*\*`kwargs`**)
-
-Build a convnet style learner from `dls` and `arch` using the `timm` library
-
-
-```python
+```
+#exports
 def timm_learner(dls, arch:str, loss_func=None, pretrained=True, cut=None, splitter=None,
                 y_range=None, config=None, n_out=None, normalize=True, **kwargs):
     "Build a convnet style learner from `dls` and `arch` using the `timm` library"
@@ -224,20 +203,20 @@ def timm_learner(dls, arch:str, loss_func=None, pretrained=True, cut=None, split
 
 Let's try it out by making the same model we did a moment ago:
 
-```python
+```
 learn = timm_learner(dls, 'efficientnet_b3a')
 ```
 
 And to verify let's look at those parameters one more time:
 
-```python
+```
 unfrozen_params = filter(lambda p: not p.requires_grad, learn.model.parameters())
 unfrozen_params = sum([np.prod(p.size()) for p in unfrozen_params])
 model_parameters = filter(lambda p: p.requires_grad, learn.model.parameters())
 frozen_params = sum([np.prod(p.size()) for p in model_parameters])
 ```
 
-```python
+```
 unfrozen_params, frozen_params
 ```
 
@@ -262,7 +241,7 @@ learn = timm_learner(dls, 'efficientnet_b3a', metrics=[error_rate, accuracy])
 To query various models to see what is available, you should directly use the `timm` library.
 
 
-```python
+```
 import timm
 ```
 
@@ -270,7 +249,7 @@ import timm
 
 One option is to list every model possible:
 
-```python
+```
 timm.list_models()[:10]
 ```
 
@@ -294,7 +273,7 @@ timm.list_models()[:10]
 
 You can also query the names of what is available as well, denoted as below:
 
-```python
+```
 timm.list_models('*efficientnet*')[:10]
 ```
 
@@ -314,7 +293,7 @@ timm.list_models('*efficientnet*')[:10]
 
 
 
-```python
+```
 timm.list_models('*b3a')[:10]
 ```
 
@@ -325,7 +304,7 @@ timm.list_models('*b3a')[:10]
 
 
 
-```python
+```
 timm.list_models('resne*t*', pretrained=True)[:10]
 ```
 

@@ -29,21 +29,21 @@ In this tutorial we will show how to use various cross validation methodologies 
 
 We'll be using the `tabular` module for the first example, along with the `ADULTS` dataset. Let's grab those:
 
-```python
+```
 from fastai.tabular.all import *
 ```
 
-```python
+```
 path = untar_data(URLs.ADULT_SAMPLE)
 ```
 
 Let's open it in `Pandas`:
 
-```python
+```
 df = pd.read_csv(path/'adult.csv')
 ```
 
-```python
+```
 df.head()
 ```
 
@@ -185,7 +185,7 @@ df.head()
 Next we want to create a constant test set and declare our various variables and `procs`. We'll just be using the last 10% of the data, however figuring out how to make your test set is a very important problem. To read more, see Rachel Thomas' article on [How (and why) to create a good validation set](https://www.fast.ai/2017/11/13/validation-sets/).
 {% include note.html content='we call it a test set here as we make our own mini validation sets when we&#8217;re training' %}
 
-```python
+```
 cat_names = ['workclass', 'education', 'marital-status', 'occupation', 'relationship', 'race']
 cont_names = ['age', 'fnlwgt', 'education-num']
 procs = [Categorify, FillMissing, Normalize]
@@ -193,14 +193,14 @@ procs = [Categorify, FillMissing, Normalize]
 
 And now we'll split our dataset:
 
-```python
+```
 print(f'10% of our data is {int(len(df) * .1)} rows')
 ```
 
     10% of our data is 3256 rows
 
 
-```python
+```
 start_val = len(df) - 3256; start_val
 ```
 
@@ -211,7 +211,7 @@ start_val = len(df) - 3256; start_val
 
 
 
-```python
+```
 train = df.iloc[:start_val]
 test = df.iloc[start_val:]
 ```
@@ -228,14 +228,14 @@ As we are training, there is zero overlap in the validation sets whatsoever. As 
 
 Now for the `kfold`. We'll first be using `sklearn`'s `KFold` class. This method works by running through all the indicies available and seperating out the folds. For a minimum example, take the following:
 
-```python
+```
 train_idxs = list(range(0,9))
 test_idxs = [10]
 ```
 
 We now have some training indicies and a test set:
 
-```python
+```
 train_idxs, test_idxs
 ```
 
@@ -248,11 +248,11 @@ train_idxs, test_idxs
 
 Now we can instantiate a `KFold` object, passing in the number of splits, whether to shuffle the data before splitting into folds, and potentially a seed:
 
-```python
+```
 from sklearn.model_selection import KFold
 ```
 
-```python
+```
 dummy_kf = KFold(n_splits=5, shuffle=False); dummy_kf
 ```
 
@@ -266,7 +266,7 @@ dummy_kf = KFold(n_splits=5, shuffle=False); dummy_kf
 And now we can run through our splits by iterating through train and valid indexes. We pass in our `x` data through `dummy_kf.split` to get the indexes 
 > You could also pass in your `y`'s intead:
 
-```python
+```
 for train_idx, valid_idx in dummy_kf.split(train_idxs):
     print(f'Train: {train_idx}, Valid: {valid_idx}')
 ```
@@ -297,18 +297,18 @@ When we preprocess our tabular training dataset, we build our `procs` based upon
     AssertionError: nan values in `education-num` but not in setup training set
 
 
-So how do we fix this? We should preprocess the entire training `DataFrame` into [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas) first, this way we can extract all the `proc` information. Let's do that now:
+So how do we fix this? We should preprocess the entire training `DataFrame` into `TabularPandas` first, this way we can extract all the `proc` information. Let's do that now:
 
-```python
+```
 to_base = TabularPandas(train, procs, cat_names, cont_names, y_names='salary')
 ```
 
 Next we need to extract all the information we need. This includes:
-* [`Categorify`](https://docs.fast.ai/tabular.core#Categorify)'s classes
-* [`Normalize`](https://docs.fast.ai/data.transforms#Normalize)'s `means` and `stds`
-* [`FillMissing`](https://docs.fast.ai/tabular.core#FillMissing)'s `fill_vals` and `na_dict`
+* `Categorify`'s classes
+* `Normalize`'s `means` and `stds`
+* `FillMissing`'s `fill_vals` and `na_dict`
 
-```python
+```
 classes = to_base.classes
 means, stds = to_base.normalize.means, to_base.normalize.stds
 fill_vals, na_dict = to_base.fill_missing.fill_vals, to_base.fill_missing.na_dict
@@ -316,7 +316,7 @@ fill_vals, na_dict = to_base.fill_missing.fill_vals, to_base.fill_missing.na_dic
 
 Now we could generate new procs based on those and apply them to our dataset:
 
-```python
+```
 procs = [Categorify(classes), Normalize.from_tab(means, stds), FillMissing(fill_strategy=FillStrategy.median, fill_vals=fill_vals, na_dict=na_dict)]
 ```
 
@@ -327,13 +327,13 @@ Now that we have our adjusted `procs`, let's try training.
 We'll want to make a loop that will do the following:
 
 1. Make our `KFold` and split
-2. Build a [`TabularPandas`](https://docs.fast.ai/tabular.core#TabularPandas) object given our splits
+2. Build a `TabularPandas` object given our splits
 3. Train for some training regiment
-4. Get predictions on the [`test`](https://fastcore.fast.ai/test#test) set, and potentially keep track of any statistics.
+4. Get predictions on the `test` set, and potentially keep track of any statistics.
 
 Let's do so below:
 
-```python
+```
 val_pct, tst_preds = L(), L()
 kf = KFold(n_splits=5, shuffle=False)
 for train_idx, valid_idx in kf.split(train.index):
@@ -537,7 +537,7 @@ for train_idx, valid_idx in kf.split(train.index):
 
 Now let's take a look at our results:
 
-```python
+```
 for i, (pred, truth) in enumerate(tst_preds):
     print(f'Fold {i+1}: {accuracy(pred, truth)}')
 ```
@@ -551,7 +551,7 @@ for i, (pred, truth) in enumerate(tst_preds):
 
 Let's try ensembling them and seeing what happens:
 
-```python
+```
 sum_preds = []
 for i, (pred, truth) in enumerate(tst_preds):
     sum_preds.append(pred.numpy())
@@ -570,13 +570,13 @@ While the first example simply split our dataset either randomly (if we passed `
 
 Stratified K-Fold Validation allows us to split our data while also preserving the percentage of samples inside of each class. We'll follow the same methodology as we did before with a few minor changes to have it work with Stratified K-Fold
 
-```python
+```
 from sklearn.model_selection import StratifiedKFold
 ```
 
 The only difference is along with our `train.index` we also need to pass in our `y`'s so it can gather the class distributions:
 
-```python
+```
 val_pct, tst_preds = L(), L()
 skf = StratifiedKFold(n_splits=5, shuffle=False)
 for train_idx, valid_idx in kf.split(train.index, train['salary']): # right here
@@ -780,7 +780,7 @@ for train_idx, valid_idx in kf.split(train.index, train['salary']): # right here
 
 Let's see how our new version fairs up:
 
-```python
+```
 for i, (pred, truth) in enumerate(tst_preds):
     print(f'Fold {i+1}: {accuracy(pred, truth)}')
 ```
@@ -796,7 +796,7 @@ We can see that so far it looks a bit better (we actually have one with 84%!).
 
 Now let's try the ensemble:
 
-```python
+```
 sum_preds = []
 for i, (pred, truth) in enumerate(tst_preds):
     sum_preds.append(pred.numpy())
@@ -820,13 +820,14 @@ To run Multi-Label Stratified K-Fold, I will show an example below, but we will 
 First we'll need to import our `MultilabelStratifiedKfold` from `iterstrat`:
 
 
-```python
+```
 from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 ```
 
 Then when following our above method (ensure you have your `loss_func`, etc properly setup), we simply replace our `for train_idx, valid_idx` with:
 
-```python
+```
+#slow
 mskf = MultilabelStratifiedKFold(n_splits=5)
 for train_idx, val_idx in mskf.split(X=train, y=train[y_names]):
     "blah"
