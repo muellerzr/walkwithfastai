@@ -1,6 +1,6 @@
 title: ''
 description: 'Welcome to fastai'
-base: '/muellerzr.github.io/walkwithfastai/'
+base: '/walkwithfastai/'
 markdown: 
   extractHeaders: ['h2', 'h3', 'h4']
 themeConfig:
