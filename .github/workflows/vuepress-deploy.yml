@@ -27,7 +27,7 @@ jobs:
       uses: jenkey2011/vuepress-deploy@master
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        TARGET_REPO: iyaja/walkwithfastai.github.io
+        TARGET_REPO: muellerzr/walkwithfastai
         TARGET_BRANCH: gh-pages
         BUILD_SCRIPT: yarn add -D vuepress && yarn docs:build
         BUILD_DIR: docs/.vuepress/dist/
